@@ -106,30 +106,22 @@ The Streamlit UI will be available at `http://localhost:8501`
 ### Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│              STREAMLIT FRONTEND (Web UI)                    │
-│   Setup Index | Monitor | Event History | JIRA Test       │
-└────────────────┬────────────────────────────────────────────┘
-                 │ HTTP
-┌────────────────▼────────────────────────────────────────────┐
-│          FASTAPI BACKEND (REST API)                         │
-│                                                             │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────────┐   │
-│  │   Indexer   │  │ Log Watcher  │  │ LLM Analyzer   │   │
-│  │  (Parsers)  │  │ (Monitor)    │  │ (Two-Step)     │   │
-│  └─────────────┘  └──────────────┘  └────────────────┘   │
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐ │
-│  │         Global Application State                     │ │
-│  │  - Backend Index  - Events  - Monitoring Status     │ │
-│  └──────────────────────────────────────────────────────┘ │
-│                           │                                 │
-│                           ▼                                 │
-│                    JIRA Client (Tickets)                   │
-└──────────────────────────────────────────────────────────────┘
-        │                    │                      │
-        ▼                    ▼                      ▼
-  backend_index.json    Log Files (JSON)     JIRA API
+                    Streamlit UI
+                   (Web Interface)
+                         │
+                        HTTP
+                         │
+        ┌────────────────▼────────────────┐
+        │     FastAPI Backend             │
+        │                                 │
+        │  Indexer  Monitor  Analyzer     │
+        │  JIRA     State               │
+        └────────────────┬────────────────┘
+                         │
+         ┌───────────────┼───────────────┐
+         ▼               ▼               ▼
+    Code Index      Log Files        Groq LLM
+    Tickets         JSON Format      JIRA API
 ```
 
 ### Data Flow Example
